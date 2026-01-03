@@ -15,7 +15,7 @@ The ESP32:
 - **XIAO ESP32S3**
 - 2.4 GHz Wi-Fi (ESP32 does not support 5 GHz)
 
-⚠️ **Important hardware notes**
+**Important hardware notes**
 - The **FPC ribbon cable metal contacts must face UP**
 - Required **24Pin ↔ GND jumper** must be installed
 - Use a good USB data cable (not charge-only)
@@ -57,6 +57,10 @@ After installing:
 
 Arduino must resolve: `TFT_eSPI.h → Seeed_GFX`
 
+Once installed add this flag to files `User_Setup.h` and `User_Setup_Select.h` located in `C:\Users\your_username\Documents\Arduino\libraries\Seeed_GFX`
+```cpp
+#define EPAPER_ENABLE
+```
 ---
 
 ## driver.h (MANDATORY)
