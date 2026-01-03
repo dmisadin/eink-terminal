@@ -38,15 +38,21 @@ The ESP32:
 ## Arduino IDE Setup
 
 ### 1. Install ESP32 board support
-Arduino IDE → **Boards Manager**  
-Install **“esp32 by Espressif Systems”**
+
+Tools → Boards → **Boards Manager**  
+Install **"esp32 by Espressif Systems"**
+
+Connect your microcontroller.
 
 Select board:
+Tools → Boards → esp32 → `XIAO ESP32S3`
+
+Select port: i.e. `COM3`
 
 ---
 
 ### 2. Install the correct graphics library
-Download repository as ZIP: **Direct link (official):** https://github.com/Seeed-Studio/Seeed_GFX
+Download repository as ZIP: https://github.com/Seeed-Studio/Seeed_GFX
 
 Install via: `Sketch → Include Library → Add .ZIP Library…`
 
@@ -57,7 +63,7 @@ After installing:
 
 Arduino must resolve: `TFT_eSPI.h → Seeed_GFX`
 
-Once installed add this flag to files `User_Setup.h` and `User_Setup_Select.h` located in `C:\Users\your_username\Documents\Arduino\libraries\Seeed_GFX`
+Once installed, **add this flag to files** `User_Setup.h` and `User_Setup_Select.h` located in `C:\Users\your_username\Documents\Arduino\libraries\Seeed_GFX`
 ```cpp
 #define EPAPER_ENABLE
 ```
