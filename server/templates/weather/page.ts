@@ -79,21 +79,25 @@ async function main() {
                     ticks: {
                         maxRotation: 0, 
                         autoSkip: true, 
-                        font: fontSpec
-                    }
+                        font: fontSpec,
+                        color: "black"
+                    },
+                    grid: { color: "#888"}
                 },
                 yTemp: {
                     type: "linear",
                     position: "left",
-                    title: { display: true, text: "°C", font: fontSpec },
-                    ticks: { font: fontSpec }
+                    title: { display: true, text: "°C", font: fontSpec, color: "black" },
+                    ticks: { font: fontSpec, color: "black" },
+                    grid: { color: "#888"}
                 },
                 yPrcp: {
                     type: "linear",
                     position: "right",
-                    title: { display: true, text: "mm", font: fontSpec },
+                    title: { display: true, text: "mm", font: fontSpec, color: "black" },
                     grid: { drawOnChartArea: false }, // prevents messy double grid :contentReference[oaicite:1]{index=1}
-                    ticks: { font: fontSpec }
+                    ticks: { font: fontSpec, color: "black", precision: 0 },
+                    suggestedMax: 4
                 }
             }
         }
