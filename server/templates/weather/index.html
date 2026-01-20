@@ -10,48 +10,11 @@
 
 <body>
     <div class="page">
-        <header class="header">
-            <div class="title">TRMNL Local</div>
-            <div class="subtitle">HTML/CSS → Playwright → 1-bit BMP</div>
-        </header>
-
-        <main class="grid">
-            <section class="card">
-                <div class="card-title">Status</div>
-                <div class="card-body">
-                    <div><strong>Server:</strong> OK</div>
-                    <div><strong>Last render:</strong> <span id="ts">—</span></div>
-                </div>
-            </section>
-
-            <section class="card">
-                <div class="card-title">Todo</div>
-                <div class="card-body">
-                    <ul>
-                        <li>Add Home Assistant</li>
-                        <li>Add Calendar</li>
-                        <li>Add Weather</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section class="card wide">
-                <div class="card-title">Notes</div>
-                <div class="card-body">
-                    Keep it high-contrast and avoid thin fonts for best e-ink readability.
-                </div>
-            </section>
-        </main>
-
-        <footer class="footer">
-            <div>800x480 • monochrome</div>
-        </footer>
+        <canvas id="wxChart" width="740" height="250"></canvas>
     </div>
 
-    <script>
-        // Simple deterministic content (no animations)
-        document.getElementById("ts").textContent = new Date().toLocaleString();
-    </script>
+
+    <script type="module" src="./page.js"></script>
 </body>
 
 </html>

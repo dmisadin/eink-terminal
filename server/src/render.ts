@@ -5,7 +5,7 @@ import fs from "node:fs/promises";
 export type RenderOptions = {
     width: number;
     height: number;
-    htmlPath: string;
+    url: string;
     outPngPath: string;
 };
 
@@ -17,14 +17,29 @@ export async function renderHtmlToPng(opts: RenderOptions): Promise<void> {
             deviceScaleFactor: 1
         });
 
-        // Load local HTML file that links to local CSS file
-        const fileUrl = "file://" + path.resolve(opts.htmlPath).replace(/\\/g, "/");
-        await page.goto(fileUrl, { waitUntil: "networkidle" });
+        // Debug hooks (keep these until stable)
+        page.on("console", (msg) => console.log("[PAGE]", msg.type(), msg.text()));
+        page.on("pageerror", (err) => console.log("[PAGE ERROR]", err));
+        page.on("requestfailed", (req) =>
+            console.log("[REQ FAILED]", req.url(), req.failure()?.errorText)
+        );
 
-        // Ensure a white background (important for e-ink)
+        //const fileUrl = "file://" + path.resolve(opts.url).replace(/\\/g, "/");
+        await page.goto(opts.url, { waitUntil: "domcontentloaded" });
+
+        // Wait for the page to say it's ready OR expose a render error
+        await page.waitForFunction(
+            () => (window as any).__RENDER_DONE__ === true || (window as any).__RENDER_ERROR__,
+            null,
+            { timeout: 15000 }
+        );
+
+        const renderError = await page.evaluate(() => (window as any).__RENDER_ERROR__ || null);
+        if (renderError) throw new Error("Template render failed:\n" + renderError);
+
+        // Ensure white background
         await page.addStyleTag({ content: "body{background:#fff !important;}" });
 
-        // Screenshot full viewport
         await fs.mkdir(path.dirname(opts.outPngPath), { recursive: true });
         await page.screenshot({ path: opts.outPngPath, fullPage: false });
     } finally {

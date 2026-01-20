@@ -1,3 +1,7 @@
 node_modules
+dist/
+out/
 
-out
+templates/**/page.js
+templates/**/page.js.map
+templates/**/*.json

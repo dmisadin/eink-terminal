@@ -4,12 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "npm run dev:templates & tsx watch src/index.ts",
     "build": "tsc -p tsconfig.json",
-    "start": "node dist/index.js",
-    "pw:install": "playwright install chromium"
+    "start": "node dist/src/index.js",
+    "pw:install": "playwright install chromium",
+    "build:templates": "esbuild templates/weather/page.ts --bundle --format=esm --platform=browser --target=es2020 --outfile=templates/weather/page.js",
+    "dev:templates": "esbuild templates/weather/page.ts --bundle --format=esm --platform=browser --target=es2020 --outfile=templates/weather/page.js --watch"
   },
   "dependencies": {
+    "chart.js": "^4.5.1",
     "express": "^4.19.2",
     "playwright": "^1.49.0",
     "pngjs": "^7.0.0"
