@@ -1,6 +1,6 @@
 import Chart, { FontSpec } from "chart.js/auto";
 
-const OPEN_METEO_API_URL = "https://api.open-meteo.com/v1/forecast?latitude=40.4165&longitude=-3.7026&hourly=weather_code,precipitation,temperature_2m&timezone=Europe%2FBerlin&forecast_days=3";
+const OPEN_METEO_API_URL = "https://api.open-meteo.com/v1/forecast?latitude=43.5432&longitude=16.4931&hourly=weather_code,precipitation,temperature_2m&current=temperature_2m,apparent_temperature,weather_code,precipitation,is_day,wind_speed_10m,wind_direction_10m&timezone=Europe%2FBerlin&forecast_days=3";
 
 type OpenMeteoResponse = {
     hourly: {
@@ -87,14 +87,14 @@ async function main() {
                 yTemp: {
                     type: "linear",
                     position: "left",
-                    title: { display: true, text: "°C", font: fontSpec, color: "black" },
-                    ticks: { font: fontSpec, color: "black" },
+                    title: { display: true, text: "Temperatura °C", font: fontSpec, color: "black" },
+                    ticks: { font: fontSpec, color: "black", precision: 0 },
                     grid: { color: "#888"}
                 },
                 yPrcp: {
                     type: "linear",
                     position: "right",
-                    title: { display: true, text: "mm", font: fontSpec, color: "black" },
+                    title: { display: true, text: "Padaline mm", font: fontSpec, color: "black" },
                     grid: { drawOnChartArea: false }, // prevents messy double grid :contentReference[oaicite:1]{index=1}
                     ticks: { font: fontSpec, color: "black", precision: 0 },
                     suggestedMax: 4

@@ -21,65 +21,73 @@ body {
 .page {
     width: var(--w);
     height: var(--h);
-    padding: 24px;
+    padding: 1em 3em;
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 16px;
+
+    background-color: white;
 }
 
-.header {
+/* Weather styling */
+.weather-data {
+    width: 100%;
+    flex-grow: 1;
+
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
-    border-bottom: 4px solid #000;
-    padding-bottom: 10px;
+
+
+}
+.left {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-.title {
-    font-size: 40px;
-    font-weight: 800;
-    letter-spacing: 0.5px;
+.location-name {
+    font-size: 48px;
+    font-weight: bolder;
 }
 
-.subtitle {
-    font-size: 18px;
-    font-weight: 600;
+.current-title {
+    font-size: 24px;
 }
 
-.grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-auto-rows: min-content;
-    gap: 16px;
-    flex: 1;
-}
-
-.card {
-    border: 4px solid #000;
-    padding: 14px 16px;
-    background: #fff;
-}
-
-.card.wide {
-    grid-column: 1 / -1;
-}
-
-.card-title {
-    font-size: 20px;
-    font-weight: 800;
-    margin-bottom: 10px;
-}
-
-.card-body {
-    font-size: 18px;
-    line-height: 1.25;
-}
-
-.footer {
-    border-top: 4px solid #000;
-    padding-top: 10px;
-    font-size: 16px;
-    font-weight: 700;
+.current-temperature {
     display: flex;
     justify-content: space-between;
+    align-items: end;
+    gap: 1em;
+}
+
+.temperature {
+    font-size: 56px;
+    font-weight: 500;
+    line-height: 56px;
+}
+
+.apparent {
+    display: flex;
+    flex-direction: column;
+    text-align: end;
+}
+
+.apparent-temperature {
+    font-size: 28px;
+}
+
+.right {
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+
+    text-align: end;
+    font-size: 1.5em;
+    line-height: 1.75em;
+}
+
+.amount {
+    font-weight: bold;
 }
