@@ -1,4 +1,4 @@
-export interface OpenMeteo {
+export interface OpenMeteoModel {
     latitude: number
     longitude: number
     generationtime_ms: number
