@@ -66,25 +66,25 @@ async function main() {
             animation: false,
             normalized: true,
             plugins: {
-                legend: { display: false }, 
+                legend: { display: false },
                 tooltip: { enabled: false } // better for e-ink screenshots
             },
             scales: {
                 x: {
                     ticks: {
-                        maxRotation: 0, 
-                        autoSkip: true, 
+                        maxRotation: 0,
+                        autoSkip: true,
                         font: fontSpec,
                         color: "black"
                     },
-                    grid: { color: "#888"}
+                    grid: { color: "#9a9a9a" }
                 },
                 yTemp: {
                     type: "linear",
                     position: "left",
                     title: { display: true, text: "TEMPERATURA °C", font: fontTitleSpec, color: "black" },
                     ticks: { font: fontSpec, color: "black", precision: 0 },
-                    grid: { color: "#888"}
+                    grid: { color: "#9a9a9a" }
                 },
                 yPrcp: {
                     type: "linear",
@@ -108,6 +108,7 @@ function setText(selector: string, value: string) {
 }
 
 function updateDOMWithWeatherData(data: OpenMeteoModel) {
+    setText("#timestamp", formattedTimestamp(data.current.time));
     setText("#temperature", `${Math.round(data.current.temperature_2m)}°C`);
     setText("#apparent-temperature", `${Math.round(data.current.apparent_temperature)}°C`);
     setText("#precipitation .amount", Math.round(data.current.precipitation).toString());
@@ -131,6 +132,18 @@ function getWindDirectionHr(deg: number): string {
     return directions[index];
 }
 
+function formattedTimestamp(isoString: string) {
+    const date = new Date(isoString);
+    const options: Intl.DateTimeFormatOptions = {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    }
+
+    return date.toLocaleString("hr-HR", options);
+}
 
 main().then(() => {
     (window as any).__RENDER_DONE__ = true;
