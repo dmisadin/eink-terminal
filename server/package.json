@@ -12,9 +12,10 @@
     "build:server": "tsc -p tsconfig.json",
     "build:templates": "esbuild templates/weather/page.ts --bundle --format=esm --platform=browser --target=es2020 --outfile=dist/templates/weather/page.js",
     "copy:templates": "tsx scripts/copy-templates.ts"
-},
+  },
   "dependencies": {
     "chart.js": "^4.5.1",
+    "chartjs-plugin-annotation": "^3.1.0",
     "express": "^4.19.2",
     "playwright": "^1.49.0",
     "pngjs": "^7.0.0"

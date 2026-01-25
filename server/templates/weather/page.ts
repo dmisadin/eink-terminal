@@ -1,5 +1,6 @@
 import Chart, { FontSpec } from "chart.js/auto";
 import { OpenMeteoModel } from "./open-meteo.model";
+import annotationPlugin from "chartjs-plugin-annotation";
 
 const OPEN_METEO_API_URL = "https://api.open-meteo.com/v1/forecast?latitude=43.5432&longitude=16.4931&hourly=weather_code,precipitation,temperature_2m&current=temperature_2m,apparent_temperature,weather_code,precipitation,is_day,wind_speed_10m,wind_direction_10m&timezone=Europe%2FBerlin&forecast_days=3";
 
@@ -32,6 +33,7 @@ async function main() {
 
     // If Playwright renders multiple times in dev, avoid duplicate charts
     (Chart as any).getChart?.(canvas)?.destroy?.();
+    Chart.register(annotationPlugin);
 
     const fontSpec: Partial<FontSpec> = { size: 16, weight: 400 };
     const fontTitleSpec: Partial<FontSpec> = { size: 20, weight: 600 };
@@ -67,7 +69,18 @@ async function main() {
             normalized: true,
             plugins: {
                 legend: { display: false },
-                tooltip: { enabled: false } // better for e-ink screenshots
+                tooltip: { enabled: false }, // better for e-ink screenshots
+                annotation: {
+                    annotations: {
+                        midnightLine: {
+                            type: "line",
+                            scaleID: "x",
+                            value: "00",
+                            borderColor: "black",
+                            borderWidth: 2
+                        }
+                    }
+                }
             },
             scales: {
                 x: {
