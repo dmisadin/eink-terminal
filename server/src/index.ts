@@ -1,5 +1,6 @@
 import express from "express";
 import path from "node:path";
+import fsSync from "node:fs";
 import fs from "node:fs/promises";
 import os from "node:os";
 
@@ -13,9 +14,17 @@ const PORT = 3000;
 const W = 800;
 const H = 480;
 
-const ROOT = path.resolve(".");
-const TEMPLATE_HTML = path.join(ROOT, "templates", "weather", "index.html");
+const ROOT = process.cwd();
+const devTemplates = path.join(ROOT, "templates");
+const prodTemplates = path.join(ROOT, "dist", "templates");
+const TEMPLATES_ROOT = fsSync.existsSync(prodTemplates)
+  ? prodTemplates
+  : devTemplates;
 const TEMPLATE_URL = "http://127.0.0.1:3000/templates/weather/index.html";
+
+console.log("Templates root:", TEMPLATES_ROOT);
+
+app.use("/templates", express.static(TEMPLATES_ROOT));
 
 const OUT_DIR = path.join(ROOT, "out");
 const PNG_PATH = path.join(OUT_DIR, "screen.png");

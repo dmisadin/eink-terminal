@@ -5,12 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "npm run dev:templates & tsx watch src/index.ts",
-    "build": "tsc -p tsconfig.json",
     "start": "node dist/src/index.js",
     "pw:install": "playwright install chromium",
-    "build:templates": "esbuild templates/weather/page.ts --bundle --format=esm --platform=browser --target=es2020 --outfile=templates/weather/page.js",
-    "dev:templates": "esbuild templates/weather/page.ts --bundle --format=esm --platform=browser --target=es2020 --outfile=templates/weather/page.js --watch"
-  },
+    "dev:templates": "esbuild templates/weather/page.ts --bundle --format=esm --platform=browser --target=es2020 --outfile=templates/weather/page.js --watch",
+    "build": "npm run build:server && npm run build:templates && npm run copy:templates",
+    "build:server": "tsc -p tsconfig.json",
+    "build:templates": "esbuild templates/weather/page.ts --bundle --format=esm --platform=browser --target=es2020 --outfile=dist/templates/weather/page.js",
+    "copy:templates": "tsx scripts/copy-templates.ts"
+},
   "dependencies": {
     "chart.js": "^4.5.1",
     "express": "^4.19.2",
