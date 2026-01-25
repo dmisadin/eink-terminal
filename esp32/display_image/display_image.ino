@@ -4,6 +4,7 @@
 #include <TFT_eSPI.h>
 #include <WiFi.h>
 #include <HTTPClient.h>
+#include "esp_sleep.h"
 
 #ifndef EPAPER_ENABLE
 #error "EPAPER_ENABLE is NOT defined. You are not building the e-paper code path."
@@ -14,14 +15,16 @@ EPaper epaper = EPaper();
 #endif
 
 // ---- CONFIG ----
-static const char* IMAGE_URL = "http://192.168.100.7:3000/screen.bmp"; // <-- change to your PC IP
+static const char* IMAGE_URL = "http://192.168.100.38:3000/screen.bmp";
 static const int W = 800;
 static const int H = 480;
-static const int ROW_BYTES = (W + 7) / 8;          // 100
-static const int ROW_STRIDE = (ROW_BYTES + 3) & ~3; // 4-byte aligned
+static const int ROW_BYTES  = (W + 7) / 8;          // 100
+static const int ROW_STRIDE = (ROW_BYTES + 3) & ~3; // 4-byte aligned (=> 100)
 
-// If image looks inverted, flip this to true.
 static const bool INVERT_BITS = false;
+
+// 10 minutes
+static const uint64_t SLEEP_US = 10ULL * 60ULL * 1000000ULL;
 
 // ---- helpers ----
 static bool readExact(Stream& s, uint8_t* dst, size_t n, uint32_t timeoutMs = 15000) {
@@ -56,7 +59,7 @@ static bool fetchAndDrawBmp1bpp(const char* url) {
   WiFiClient* stream = http.getStreamPtr();
 
   // Read header + palette (we assume standard layout: 14+40+8 = 62 bytes)
-  uint8_t hdr[62];
+  uint8_t hdr[62]; // 14 + 40 + 8 palette
   if (!readExact(*stream, hdr, sizeof(hdr))) {
     Serial.println("BMP header read failed");
     http.end();
@@ -70,11 +73,11 @@ static bool fetchAndDrawBmp1bpp(const char* url) {
   }
 
   uint32_t pixelOffset = u32le(&hdr[10]);
-  uint32_t dibSize = u32le(&hdr[14]);
-  int32_t width = s32le(&hdr[18]);
-  int32_t height = s32le(&hdr[22]); // negative = top-down
-  uint16_t planes = u16le(&hdr[26]);
-  uint16_t bpp = u16le(&hdr[28]);
+  uint32_t dibSize     = u32le(&hdr[14]);
+  int32_t  width       = s32le(&hdr[18]);
+  int32_t  height      = s32le(&hdr[22]); // negative = top-down
+  uint16_t planes      = u16le(&hdr[26]);
+  uint16_t bpp         = u16le(&hdr[28]);
   uint32_t compression = u32le(&hdr[30]);
 
   if (dibSize < 40 || planes != 1 || bpp != 1 || compression != 0) {
@@ -89,7 +92,6 @@ static bool fetchAndDrawBmp1bpp(const char* url) {
     http.end();
     return false;
   }
-
   // Skip to pixel data if needed
   if (pixelOffset < sizeof(hdr)) {
     Serial.println("Bad pixel offset");
@@ -97,6 +99,7 @@ static bool fetchAndDrawBmp1bpp(const char* url) {
     return false;
   }
 
+  // Skip to pixel data
   uint32_t skip = pixelOffset - sizeof(hdr);
   while (skip--) {
     int c = stream->read();
@@ -135,6 +138,38 @@ static bool fetchAndDrawBmp1bpp(const char* url) {
   return true;
 }
 
+static bool connectWiFi(uint32_t timeoutMs = 15000) {
+  WiFi.mode(WIFI_STA);
+  WiFi.setSleep(true);          // modem-sleep while connected
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+
+  uint32_t start = millis();
+  Serial.print("Connecting WiFi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(250);
+    Serial.print(".");
+    if (millis() - start > timeoutMs) {
+      Serial.println("\nWiFi connect timeout");
+      return false;
+    }
+  }
+  Serial.printf("\nWiFi OK, IP=%s\n", WiFi.localIP().toString().c_str());
+  return true;
+}
+
+static void goToSleep() {
+  // cleanly shut down radios before sleeping
+  WiFi.disconnect(true);
+  WiFi.mode(WIFI_OFF);
+  btStop(); // safe even if not used
+
+  Serial.printf("Sleeping for %llu seconds...\n", (unsigned long long)(SLEEP_US / 1000000ULL));
+  Serial.flush();
+
+  esp_sleep_enable_timer_wakeup(SLEEP_US);
+  esp_deep_sleep_start();
+}
+
 void setup() {
   Serial.begin(115200);
   delay(300);
@@ -144,19 +179,21 @@ void setup() {
   epaper.setRotation(0);
 #endif
 
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  // Optional: see why we woke up
+  esp_sleep_wakeup_cause_t cause = esp_sleep_get_wakeup_cause();
+  Serial.printf("Wake cause: %d\n", (int)cause);
 
-  Serial.print("Connecting WiFi");
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
+  bool ok = connectWiFi();
+  if (ok) {
+    Serial.println("Fetching BMP...");
+    ok = fetchAndDrawBmp1bpp(IMAGE_URL);
+    Serial.println(ok ? "Displayed OK." : "Display failed.");
   }
-  Serial.printf("\nWiFi OK, IP=%s\n", WiFi.localIP().toString().c_str());
 
-  Serial.println("Fetching BMP...");
-  bool ok = fetchAndDrawBmp1bpp(IMAGE_URL);
-  Serial.println(ok ? "Displayed OK." : "Display failed.");
+  // Even if failed, sleep and try again next cycle
+  goToSleep();
 }
 
-void loop() {}
+void loop() {
+  // never reached
+}
