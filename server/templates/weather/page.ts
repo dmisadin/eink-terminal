@@ -77,7 +77,8 @@ async function main() {
                             scaleID: "x",
                             value: "00",
                             borderColor: "black",
-                            borderWidth: 2
+                            borderWidth: 2,
+                            borderDash: [4]
                         }
                     }
                 }
@@ -105,7 +106,7 @@ async function main() {
                     title: { display: true, text: "PADALINE mm", font: fontTitleSpec, color: "black" },
                     grid: { drawOnChartArea: false }, // prevents messy double grid :contentReference[oaicite:1]{index=1}
                     ticks: { font: fontSpec, color: "black", precision: 0 },
-                    suggestedMax: 4
+                    suggestedMax: 3
                 }
             }
         }
