@@ -35,8 +35,12 @@ async function main() {
     (Chart as any).getChart?.(canvas)?.destroy?.();
     Chart.register(annotationPlugin);
 
-    const fontSpec: Partial<FontSpec> = { size: 16, weight: 400 };
+    const fontValueSpec: Partial<FontSpec> = { size: 16, weight: 600 };
     const fontTitleSpec: Partial<FontSpec> = { size: 20, weight: 600 };
+
+    const gradient = canvas.getContext("2d")?.createLinearGradient(0, 0, 0, 400);
+    gradient?.addColorStop(0, 'rgba(250,174,50,0.8)');   
+    gradient?.addColorStop(1, 'rgba(250,174,50,0)');
 
     new Chart(canvas, {
         data: {
@@ -50,7 +54,9 @@ async function main() {
                     tension: 0.35,
                     pointRadius: 0,
                     borderWidth: 3,
-                    borderColor: "black"
+                    borderColor: "black",
+                    backgroundColor: gradient,
+                    fill: true
                 },
                 {
                     type: "bar",
@@ -88,7 +94,7 @@ async function main() {
                     ticks: {
                         maxRotation: 0,
                         autoSkip: true,
-                        font: fontSpec,
+                        font: fontValueSpec,
                         color: "black"
                     },
                     grid: { color: "#9a9a9a" }
@@ -97,16 +103,17 @@ async function main() {
                     type: "linear",
                     position: "left",
                     title: { display: true, text: "TEMPERATURA °C", font: fontTitleSpec, color: "black" },
-                    ticks: { font: fontSpec, color: "black", precision: 0 },
-                    grid: { color: "#9a9a9a" }
+                    ticks: { font: fontValueSpec, color: "black", precision: 0 },
+                    grid: { color: "#9a9a9a" },
+                    suggestedMin: 0
                 },
                 yPrcp: {
                     type: "linear",
                     position: "right",
                     title: { display: true, text: "PADALINE mm", font: fontTitleSpec, color: "black" },
                     grid: { drawOnChartArea: false }, // prevents messy double grid :contentReference[oaicite:1]{index=1}
-                    ticks: { font: fontSpec, color: "black", precision: 0 },
-                    suggestedMax: 3
+                    ticks: { font: fontValueSpec, color: "black", precision: 1, stepSize: 0.5 },
+                    suggestedMax: 2
                 }
             }
         }
