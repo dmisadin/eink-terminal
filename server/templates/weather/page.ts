@@ -39,8 +39,8 @@ async function main() {
     const fontTitleSpec: Partial<FontSpec> = { size: 20, weight: 600 };
 
     const gradient = canvas.getContext("2d")?.createLinearGradient(0, 0, 0, 400);
-    gradient?.addColorStop(0, 'rgba(250,174,50,0.8)');   
-    gradient?.addColorStop(1, 'rgba(250,174,50,0)');
+    gradient?.addColorStop(0, 'rgba(0,0,0,0.4)');   
+    gradient?.addColorStop(0.6, 'rgba(0,0,0,0)');
 
     new Chart(canvas, {
         data: {
@@ -65,7 +65,7 @@ async function main() {
                     yAxisID: "yPrcp",
                     barPercentage: 0.9,
                     categoryPercentage: 0.9,
-                    backgroundColor: "#777"
+                    backgroundColor: "#555"
                 }
             ]
         },
