@@ -5,3 +5,8 @@ out/
 templates/**/page.js
 templates/**/page.js.map
 templates/**/*.json
+
+# Local environment secrets
+.env
+.env.*
+!.env.example
