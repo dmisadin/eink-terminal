@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import path from "node:path";
 import fsSync from "node:fs";
@@ -6,9 +7,15 @@ import os from "node:os";
 
 import { renderHtmlToPng } from "./render.js";
 import { pngFileToBmp1bpp } from "./bmp1.js";
+import weatherRouter from "./weather/weather.route.js";
 
 const app = express();
 const PORT = 3000;
+
+const apiKey = process.env.GOOGLE_WEATHER_API_KEY;
+console.log("Google API Key: ", apiKey);
+if (!apiKey)
+    throw new Error("Missing GOOGLE_WEATHER_API_KEY");
 
 // TRMNL 7.5" OG: 800x480
 const W = 800;
@@ -24,6 +31,7 @@ const TEMPLATE_URL = "http://127.0.0.1:3000/templates/weather/index.html";
 
 console.log("Templates root:", TEMPLATES_ROOT);
 
+app.use("/api/weather", weatherRouter);
 app.use("/templates", express.static(TEMPLATES_ROOT));
 
 const OUT_DIR = path.join(ROOT, "out");
